@@ -1,0 +1,62 @@
+<div class="deformFileupload"
+     tal:define="oid oid|field.oid;
+                 size size|field.widget.size;
+                 css_class css_class|field.widget.css_class">
+
+  ${field.start_mapping()}
+
+  <div class="deformReplaces" tal:condition="cstruct.get('uid')">
+
+    <input type="hidden" name="uid" value="${cstruct['uid']}"
+           id="${oid}-uid"/>
+    <span tal:content="cstruct.get('filename')"
+          id="${oid}-filename"/>
+
+  </div>
+
+  <input type="file" name="files[]" tal:attributes="size size; class css_class"
+         id="${oid}" multiple>
+  <div id="progress">
+      <style media="screen" type="text/css">
+          .bar {
+              height: 18px;
+              background: green;
+          }
+      </style>
+      <div class="bar" style="width: 0%;"></div>
+  </div>
+  ${field.end_mapping()}
+
+  <script src="${request.static_url('deform_jquery_file_upload:static/js/vendor/jquery.ui.widget.js')}"></script>
+  <script src="${request.static_url('deform_jquery_file_upload:static/js/jquery.iframe-transport.js')}"></script>
+  <script src="${request.static_url('deform_jquery_file_upload:static/js/jquery.fileupload.js')}"></script>
+  <script src="http://blueimp.github.com/JavaScript-Load-Image/load-image.min.js"></script>
+  <script src="http://blueimp.github.com/JavaScript-Canvas-to-Blob/canvas-to-blob.min.js"></script>
+  <script src="${request.static_url('deform_jquery_file_upload:static/js/jquery.fileupload-fp.js')}"></script>
+  <script tal:condition="values" type="text/javascript">
+    deform.addCallback(
+      '${oid}', 
+      function (oid) {
+         $('#' + oid).fileupload({
+              dataType: 'json',
+              done: function (e, data) {
+                  $.each(data.result, function (index, file) {
+                      $('<p/>').text(file.name).appendTo(document.body);
+                  });
+              }
+              progressall: function (e, data) {
+                  var progress = parseInt(data.loaded / data.total * 100, 10);
+                  $('#progress .bar').css(
+                      'width',
+                      progress + '%'
+                  );
+              }
+              add: function (e, data) {
+                  $(this).fileupload('process', data).done(function () {
+                    data.submit();
+                  });
+              }
+        });
+    });
+  </script>
+</div>

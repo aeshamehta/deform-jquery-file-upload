@@ -52,6 +52,7 @@ class JqueryFileUploadWidget(FileUploadWidget):
     template = 'jquery_file_upload'
     readonly_template = 'readonly/jquery_file_upload'
     size = None
+    requirements = ( ('jquery', '1.8.3'), )
 
     def __init__(self, tmpstore, **kw):
         FileUploadWidget.__init__(self, **kw)
